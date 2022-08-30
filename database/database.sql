@@ -20,9 +20,9 @@ create table users
     nickname varchar(50),
     email varchar(50),
     phone varchar(30),
-    profile varchar,
+    profile varchar default null,
     created_at timestamp default now(),
-    modified_at timestamp default now(),
+    modified_at timestamp default null,
     constraint users_pk primary key (id),
     constraint users_user_id_key unique (user_id)
 );
@@ -45,13 +45,13 @@ create table post
     id serial,
     user_id varchar(60),
     gram varchar(1000),
-    photo_1 varchar,
-    photo_2 varchar,
-    photo_3 varchar,
-    photo_4 varchar,
-    photo_5 varchar,
+    photo_1 varchar default null,
+    photo_2 varchar default null,
+    photo_3 varchar default null,
+    photo_4 varchar default null,
+    photo_5 varchar default null,
 	created_at timestamp default now(),
-	modified_at timestamp default now(),
+	modified_at timestamp default null,
 	constraint post_pk primary key (id),
 	constraint post_user_id_fk foreign key (user_id) references users (user_id) on delete cascade on update cascade
 );
