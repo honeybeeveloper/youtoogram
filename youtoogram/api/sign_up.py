@@ -45,5 +45,5 @@ class SignUpAPI(object):
 
 
 routes = [
-    Route(uri='/sign-up', view_func=SignUpAPI.sign_up, methods=['POST'])
+    Route(uri='/users/sign-up', view_func=SignUpAPI.sign_up, methods=['POST'])
 ]
