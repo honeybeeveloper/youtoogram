@@ -7,7 +7,7 @@ from youtoogram.common.exception import CustomException
 app = Flask(__name__)
 app.config['JSON_AS_ASCII'] = False
 
-routes = sign_up.routes + follow.routes
+routes = sign_up.routes + follow.routes + post.routes
 [app.add_url_rule(rule=r.uri, view_func=r.view_func, methods=r.methods) for r in routes]
 
 
