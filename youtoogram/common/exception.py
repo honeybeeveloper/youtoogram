@@ -9,6 +9,18 @@ class CustomException(Exception):
         return exception_result
 
 
+class DuplicatedUserId(CustomException):
+    def __init__(self, error_message):
+        status_code = 400
+        super().__init__(status_code, error_message)
+
+
+class LengthViolation(CustomException):
+    def __init__(self, error_message):
+        status_code = 400
+        super().__init__(status_code, error_message)
+
+
 class PasswordLengthViolation(CustomException):
     def __init__(self, error_message):
         status_code = 400
@@ -16,12 +28,6 @@ class PasswordLengthViolation(CustomException):
 
 
 class UserIdLengthViolation(CustomException):
-    def __init__(self, error_message):
-        status_code = 400
-        super().__init__(status_code, error_message)
-
-
-class DuplicatedUserId(CustomException):
     def __init__(self, error_message):
         status_code = 400
         super().__init__(status_code, error_message)
@@ -39,3 +45,7 @@ class BadRequest(CustomException):
         super().__init__(status_code, error_message)
 
 
+class IntegrityException(CustomException):
+    def __init__(self, error_message):
+        status_code = 400
+        super().__init__(status_code, error_message)

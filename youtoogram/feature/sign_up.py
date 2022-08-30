@@ -2,6 +2,7 @@ import datetime
 
 from sqlalchemy.exc import IntegrityError
 
+from youtoogram.common.exception import IntegrityException
 from youtoogram.database import entity
 from youtoogram.database.connection import db_session
 
@@ -23,6 +24,7 @@ class SignUp(object):
             db_session.commit()
         except IntegrityError:
             db_session.rollback()
+            raise IntegrityException('check the data!')
 
     @staticmethod
     def is_exists_user_id(user_id):

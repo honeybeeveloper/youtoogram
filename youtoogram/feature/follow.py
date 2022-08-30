@@ -2,6 +2,7 @@ import datetime
 
 from sqlalchemy.exc import IntegrityError
 
+from youtoogram.common.exception import IntegrityException
 from youtoogram.database import entity
 from youtoogram.database.connection import db_session
 
@@ -18,3 +19,4 @@ class Follow(object):
             db_session.commit()
         except IntegrityError:
             db_session.rollback()
+            raise IntegrityException('check the data!')
