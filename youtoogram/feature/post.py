@@ -1,5 +1,6 @@
 import datetime
 
+from sqlalchemy import func, or_
 from sqlalchemy.exc import IntegrityError
 
 from youtoogram.common.exception import IntegrityException
@@ -14,7 +15,7 @@ class Post(object):
         db_session.add(entity.Post(user_id=data['user_id'], gram=data['gram'],
                                    photo_1=data['photo_1'], photo_2=data['photo_2'],
                                    photo_3=data['photo_3'], photo_4=data['photo_4'],
-                                   photo_5=data['photo_5'], created_at=now))
+                                   photo_5=data['photo_5'], created_at=now, modified_at=now))
         try:
             db_session.commit()
         except IntegrityError:
@@ -50,3 +51,12 @@ class Post(object):
         except IntegrityError:
             db_session.rollback()
             raise IntegrityException('check the data!')
+
+    @staticmethod
+    def timeline(user_id, date_from, date_to):
+        return db_session.query(entity.Post.id, entity.Post.user_id, entity.Post.gram, entity.Post.modified_at)\
+                .outerjoin(entity.Follow, entity.Follow.follow_id == entity.Post.user_id, isouter=True)\
+                .filter((entity.Follow.user_id == user_id) | (entity.Post.user_id == user_id))\
+                .filter(entity.Post.modified_at.between(date_from, date_to))\
+                .order_by(entity.Post.id.desc())\
+                .all()
