@@ -32,6 +32,6 @@ class Post(Base):
     photo_4 = Column(String, nullable=True)
     photo_5 = Column(String, nullable=True)
     created_at = Column(DateTime, default=func.now())
-    modified_at = Column(DateTime, nullable=True)
+    modified_at = Column(DateTime, default=func.now())
 
     users = relationship('Users', back_populates='post', cascade='save-update')

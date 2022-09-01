@@ -51,7 +51,7 @@ create table post
     photo_4 varchar default null,
     photo_5 varchar default null,
 	created_at timestamp default now(),
-	modified_at timestamp default null,
+	modified_at timestamp default now(),
 	constraint post_pk primary key (id),
 	constraint post_user_id_fk foreign key (user_id) references users (user_id) on delete cascade on update cascade
 );
