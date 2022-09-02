@@ -27,9 +27,9 @@ class Users(Base):
     nickname = Column(String)
     email = Column(String)
     phone = Column(String)
-    profile = Column(String)
+    profile = Column(String, nullable=True)
     created_at = Column(DateTime, default=func.now())
-    modified_at = Column(DateTime, default=func.now())
+    modified_at = Column(DateTime, nullable=True)
 
     post = relationship('Post', back_populates='users', cascade='all, delete-orphan')
     follow = relationship('Follow', back_populates='users', cascade='all, delete-orphan')

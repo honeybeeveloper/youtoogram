@@ -26,11 +26,11 @@ class Post(Base):
                                 onupdate='CASCADE',
                                 ondelete='CASCADE'))
     gram = Column(String)
-    photo_1 = Column(String)
-    photo_2 = Column(String)
-    photo_3 = Column(String)
-    photo_4 = Column(String)
-    photo_5 = Column(String)
+    photo_1 = Column(String, nullable=True)
+    photo_2 = Column(String, nullable=True)
+    photo_3 = Column(String, nullable=True)
+    photo_4 = Column(String, nullable=True)
+    photo_5 = Column(String, nullable=True)
     created_at = Column(DateTime, default=func.now())
     modified_at = Column(DateTime, default=func.now())
 

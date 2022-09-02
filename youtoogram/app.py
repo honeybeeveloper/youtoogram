@@ -1,13 +1,13 @@
 from flask import Flask, jsonify
 
-from youtoogram.api import sign_up, follow, post
+from youtoogram.api import users, follow, post
 from youtoogram.common.exception import CustomException
 
 
 app = Flask(__name__)
 app.config['JSON_AS_ASCII'] = False
 
-routes = sign_up.routes + follow.routes
+routes = users.routes + follow.routes + post.routes
 [app.add_url_rule(rule=r.uri, view_func=r.view_func, methods=r.methods) for r in routes]
 
 

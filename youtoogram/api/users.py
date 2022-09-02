@@ -9,22 +9,24 @@ from youtoogram.api.route import Route
 from youtoogram.common.exception import (
     DuplicatedUserId,
     PasswordLengthViolation,
+    UserNotFound,
     UserIdLengthViolation
 )
-from youtoogram.feature.sign_up import SignUp
+from youtoogram.feature.users import Users
 
 
-class SignUpAPI(object):
+class UsersAPI(object):
     @staticmethod
     def sign_up():
         now = datetime.datetime.now()
         data = request.json
         # step 1. 유효성(길이) 체크
-        SignUpAPI.check_form_length(data=data)
+        UsersAPI.check_form_length(data=data)
         # step 2. 사용자 아이디 중복 체크
-        SignUpAPI.check_user_id_duplication(data=data)
+        if UsersAPI.is_exists_user_id(data=data):
+            raise DuplicatedUserId('user-id is duplicated!')
 
-        SignUp.create(data=data, now=now)
+        Users.create(data=data, now=now)
         return jsonify('successfully sign up!')
 
     @staticmethod
@@ -39,11 +41,22 @@ class SignUpAPI(object):
             raise PasswordLengthViolation('check the password length!')
 
     @staticmethod
-    def check_user_id_duplication(data):
-        if SignUp.is_exists_user_id(data['user_id']):
-            raise DuplicatedUserId('user-id is duplicated!')
+    def is_exists_user_id(data):
+        return Users.is_exists_user_id(data['user_id'])
+
+    @staticmethod
+    def delete_id():
+        now = datetime.datetime.now()
+        data = request.json
+        # step 1. 사용자 확인
+        if not UsersAPI.is_exists_user_id(data=data):
+            return UserNotFound(f'user not found!')
+
+        Users.delete(data['user_id'])
+        return jsonify('successfully delete id!')
 
 
 routes = [
-    Route(uri='/sign-up', view_func=SignUpAPI.sign_up, methods=['POST'])
+    Route(uri='/users', view_func=UsersAPI.sign_up, methods=['POST']),
+    Route(uri='/users', view_func=UsersAPI.delete_id, methods=['DELETE'])
 ]
