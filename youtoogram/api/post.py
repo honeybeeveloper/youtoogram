@@ -20,8 +20,9 @@ class PostAPI(object):
         # login id is user_id
         login_id = get_jwt_identity()
         data['user_id'] = login_id
-        Post.create(data, now)
-        return jsonify(f'Gram is posted successfully!')
+        # TODO : photo_1 경로 -> form-data
+        post_id = Post.create(data, now)
+        return {'user_id': login_id, 'post_id': post_id}
 
     @staticmethod
     def check_gram_length(gram):
@@ -36,8 +37,8 @@ class PostAPI(object):
         data = request.json
         # login id is user_id
         login_id = get_jwt_identity()
-        Post.delete(data['id'], login_id)
-        return jsonify(f'Gram is deleted successfully!')
+        Post.delete(data['post_id'], login_id)
+        return {'user_id': login_id, 'post_id': data['post_id']}
 
     @staticmethod
     @jwt_required()
@@ -47,7 +48,7 @@ class PostAPI(object):
         login_id = get_jwt_identity()
         data['user_id'] = login_id
         Post.update(data)
-        return jsonify(f'Gram is updated successfully!')
+        return {'user_id': login_id, 'post_id': data['post_id'], 'gram': data['gram']}
 
     @staticmethod
     @jwt_required()
