@@ -1,6 +1,7 @@
 import datetime
 
 from flask import request, jsonify
+from flask_jwt_extended import get_jwt_identity, jwt_required
 
 from youtoogram.api.route import Route
 from youtoogram.common.exception import LengthViolation
@@ -10,11 +11,15 @@ from youtoogram.feature.post import Post
 
 class PostAPI(object):
     @staticmethod
+    @jwt_required()
     def add_post():
         now = datetime.datetime.now()
         data = request.json
         # check gram length
         PostAPI.check_gram_length(data['gram'])
+        # login id is user_id
+        login_id = get_jwt_identity()
+        data['user_id'] = login_id
         Post.create(data, now)
         return jsonify(f'Gram is posted successfully!')
 
@@ -26,21 +31,34 @@ class PostAPI(object):
             raise LengthViolation('gram length must be less than 300!')
 
     @staticmethod
+    @jwt_required()
     def delete_post():
         data = request.json
-        Post.delete(data['id'], data['user_id'])
+        # login id is user_id
+        login_id = get_jwt_identity()
+        Post.delete(data['id'], login_id)
         return jsonify(f'Gram is deleted successfully!')
 
     @staticmethod
+    @jwt_required()
     def update_post():
         data = request.json
+        # login id is user_id
+        login_id = get_jwt_identity()
+        data['user_id'] = login_id
         Post.update(data)
         return jsonify(f'Gram is updated successfully!')
 
     @staticmethod
-    def timeline(user_id):
+    @jwt_required()
+    def timeline():
+        # login id is user_id
+        login_id = get_jwt_identity()
+        user_id = login_id
+
         date_to = datetime.datetime.now()
         date_from = date_to - datetime.timedelta(days=10)
+        # TODO : check this query!
         rows = Post.timeline(user_id, date_from, date_to)
         results = [to_dict(obj) for obj in rows]
         print(results)
@@ -51,5 +69,5 @@ routes = [
     Route(uri='/post', view_func=PostAPI.add_post, methods=['POST']),
     Route(uri='/post', view_func=PostAPI.delete_post, methods=['DELETE']),
     Route(uri='/post', view_func=PostAPI.update_post, methods=['PATCH']),
-    Route(uri='/timeline/<user_id>', view_func=PostAPI.timeline, methods=['GET'])
+    Route(uri='/timeline', view_func=PostAPI.timeline, methods=['GET'])
 ]
