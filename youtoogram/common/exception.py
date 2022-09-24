@@ -49,3 +49,9 @@ class IntegrityException(CustomException):
     def __init__(self, error_message):
         status_code = 400
         super().__init__(status_code, error_message)
+
+
+class UnauthorizedException(CustomException):
+    def __init__(self, error_message):
+        status_code = 401
+        super().__init__(status_code, error_message)
