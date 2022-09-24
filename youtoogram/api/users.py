@@ -30,13 +30,13 @@ class UsersAPI(object):
         # step 1. 유효성(길이) 체크
         UsersAPI.check_form_length(data=data)
         # step 2. 사용자 아이디 중복 체크
-        if UsersAPI.is_exists_user_id(data=data):
+        if UsersAPI.is_exists_user_id(user_id=data['user_id']):
             raise DuplicatedUserId('user-id is duplicated!')
         # step 3. 비밀번호 암호화
         data['password'] = bcrypt.hashpw(data['password'].encode('utf-8'), bcrypt.gensalt()).decode()
 
         Users.create(data=data, now=now)
-        return jsonify('successfully sign up!')
+        return {'user_id': data['user_id']}
 
     @staticmethod
     def check_form_length(data):
@@ -50,20 +50,19 @@ class UsersAPI(object):
             raise PasswordLengthViolation('check the password length!')
 
     @staticmethod
-    def is_exists_user_id(data):
-        return Users.is_exists_user_id(data['user_id'])
+    def is_exists_user_id(user_id):
+        return Users.is_exists_user_id(user_id)
 
     @staticmethod
     @jwt_required()
     def delete_id():
-        data = request.json
+        login_id = get_jwt_identity()
         # step 1. 사용자 확인
-        if not UsersAPI.is_exists_user_id(data=data):
+        if not UsersAPI.is_exists_user_id(user_id=login_id):
             return UserNotFound(f'user not found!')
 
-        login_id = get_jwt_identity()
         Users.delete(login_id)
-        return jsonify('successfully delete id!')
+        return {'user_id': login_id}
 
     @staticmethod
     def login():
