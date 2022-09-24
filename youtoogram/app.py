@@ -1,4 +1,5 @@
 from flask import Flask, jsonify
+from flask_jwt_extended import JWTManager
 
 from youtoogram.api import users, follow, post
 from youtoogram.common.exception import CustomException
@@ -9,6 +10,13 @@ app.config['JSON_AS_ASCII'] = False
 
 routes = users.routes + follow.routes + post.routes
 [app.add_url_rule(rule=r.uri, view_func=r.view_func, methods=r.methods) for r in routes]
+
+# set secret-key for JWT
+# TODO : secure config 로 빼기
+app.config['JWT_SECRET_KEY'] = 'honeybee1!2@3#youtoogram'
+app.config['JWT_ALGORITHM'] = 'HS256'
+JWTManager(app)
+
 
 
 @app.route('/test')

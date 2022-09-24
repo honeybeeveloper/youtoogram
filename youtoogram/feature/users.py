@@ -1,8 +1,8 @@
 import datetime
 
-from sqlalchemy.exc import IntegrityError
+from sqlalchemy.exc import IntegrityError, NoResultFound
 
-from youtoogram.common.exception import IntegrityException
+from youtoogram.common.exception import IntegrityException, UserNotFound
 from youtoogram.database import entity
 from youtoogram.database.connection import db_session
 
@@ -36,3 +36,13 @@ class Users(object):
     def delete(user_id):
         db_session.query(entity.Users).filter(entity.Users.user_id == user_id).delete()
         db_session.commit()
+
+    @staticmethod
+    def login(user_id, now=datetime.datetime.now()):
+        print(f'Login create now : {now}')
+        try:
+            user_id, password, = db_session.query(entity.Users.user_id, entity.Users.password)\
+                                    .filter(entity.Users.user_id == user_id).one()
+            return user_id, password
+        except NoResultFound:
+            raise UserNotFound('User Not Found!')

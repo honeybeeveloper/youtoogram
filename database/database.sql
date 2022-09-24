@@ -15,7 +15,7 @@ create table users
 (
     id serial,
     user_id varchar(60),
-    password varchar(60),
+    password varchar(200),
     name varchar(30),
     nickname varchar(50),
     email varchar(50),
