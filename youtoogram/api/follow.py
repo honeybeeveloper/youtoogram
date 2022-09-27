@@ -14,34 +14,35 @@ class FollowAPI(object):
     @jwt_required()
     def follow():
         now = datetime.datetime.now()
+        login_id = get_jwt_identity()
         data = request.json
-        # check user-id == follow-id
-        if data['user_id'] == data['follow_id']:
+
+        # check login_id == follow-id
+        if login_id == data['follow_id']:
             raise BadRequest('Can not follow yourself.')
         # check the follow-id existence
         if not Users.is_exists_user_id(data['follow_id']):
             raise UserNotFound('follow-id is not found!')
 
-        login_id = get_jwt_identity()
         data['user_id'] = login_id
         Follow.create(data=data, now=now)
-        return jsonify(f'{data["user_id"]} follow {data["follow_id"]} successfully!')
+        return {'user_id': login_id, 'follow_id': data['follow_id']}
 
     @staticmethod
     @jwt_required()
     def unfollow():
         data = request.json
-        # check user-id == follow-id
-        if data['user_id'] == data['follow_id']:
-            raise BadRequest('can not unfollow yourself.')
+        login_id = get_jwt_identity()
+        # check login_id == unfollow-id
+        if login_id == data['unfollow_id']:
+            raise BadRequest('Can not unfollow yourself.')
 
         # check the follow-id existence
-        if not Follow.is_exists_follow_id(data['user_id'], data['follow_id']):
-            raise UserNotFound('follow-id is not found!')
+        if not Follow.is_exists_follow_id(login_id, data['unfollow_id']):
+            raise UserNotFound(f'{data["unfollow_id"]} is not found!')
 
-        login_id = get_jwt_identity()
-        Follow.delete(login_id, data['follow_id'])
-        return jsonify(f'{data["user_id"]} unfollow {data["follow_id"]} successfully!')
+        Follow.delete(login_id, data['unfollow_id'])
+        return {'user_id': login_id, 'unfollow_id': data['unfollow_id']}
 
 
 routes = [
