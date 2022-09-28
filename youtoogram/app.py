@@ -6,7 +6,9 @@ from youtoogram.common.exception import CustomException
 
 
 app = Flask(__name__)
+# This is deprecated and will be removed in Flask 2.3
 app.config['JSON_AS_ASCII'] = False
+# app.json.ensure_ascii = False
 
 routes = users.routes + follow.routes + post.routes
 [app.add_url_rule(rule=r.uri, view_func=r.view_func, methods=r.methods) for r in routes]
@@ -16,7 +18,6 @@ routes = users.routes + follow.routes + post.routes
 app.config['JWT_SECRET_KEY'] = 'honeybee1!2@3#youtoogram'
 app.config['JWT_ALGORITHM'] = 'HS256'
 JWTManager(app)
-
 
 
 @app.route('/test')
