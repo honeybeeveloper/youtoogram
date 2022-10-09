@@ -4,13 +4,13 @@ from sqlalchemy import func, subquery
 from sqlalchemy.exc import IntegrityError
 
 from youtoogram.common.exception import IntegrityException
-from youtoogram.database import entity
-from youtoogram.database.connection import db_session
+from youtoogram.test_unit.test_database import entity
+from youtoogram.test_unit.test_database.connection import db_session
 
 
 class Post(object):
     @staticmethod
-    def create(data, now=datetime.datetime.now()):
+    def test_create(data, now=datetime.datetime.now()):
         print(f'Post create now : {now}')
         p = entity.Post(user_id=data['user_id'], gram=data['gram'],
                         created_at=now, modified_at=now)
@@ -24,7 +24,7 @@ class Post(object):
             raise IntegrityException('check the data!')
 
     @staticmethod
-    def delete(id, user_id):
+    def test_delete(id, user_id):
         db_session.query(entity.Post)\
             .filter(entity.Post.id == id)\
             .filter(entity.Post.user_id == user_id)\
@@ -36,7 +36,7 @@ class Post(object):
             raise IntegrityException('check the data!')
 
     @staticmethod
-    def update(data, now=datetime.datetime.now()):
+    def test_update(data, now=datetime.datetime.now()):
         db_session.query(entity.Post)\
             .filter(entity.Post.id == int(data['post_id']))\
             .filter(entity.Post.user_id == data['user_id'])\
@@ -49,7 +49,7 @@ class Post(object):
             raise IntegrityException('check the data!')
 
     @staticmethod
-    def timeline(user_id, date_from, date_to):
+    def test_timeline(user_id, date_from, date_to):
         return db_session.query(entity.Post.id, entity.Post.user_id, entity.Post.gram, entity.Post.modified_at)\
                 .outerjoin(entity.Follow, entity.Follow.follow_id == entity.Post.user_id, isouter=True)\
                 .filter((entity.Follow.user_id == user_id) | (entity.Post.user_id == user_id))\
@@ -58,12 +58,7 @@ class Post(object):
                 .all()
 
     @staticmethod
-    def get_recent_post_id(user_id):
+    def test_get_recent_post(user_id):
         sub_stmt = db_session.query(func.max(entity.Post.id).label('max_post_id')).filter(entity.Post.user_id == user_id).subquery()
         recent_id, recent_gram, = db_session.query(sub_stmt.c.max_post_id, entity.Post.gram).filter(entity.Post.id == sub_stmt.c.max_post_id).one()
         return recent_id, recent_gram
-
-
-if __name__ == '__main__':
-    recent, gram = Post.get_recent_post_id('honeybeeveloper')
-    print(recent, gram)
