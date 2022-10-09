@@ -1,0 +1,11 @@
+{
+    "python.testing.pytestArgs": [
+        "youtoogram"
+    ],
+    "python.testing.unittestEnabled": false,
+    "python.testing.pytestEnabled": true,
+    "terminal.integrated.env.windows": {
+        "PYTHONPATH": "${workspaceFolder}${pathSeparator}youtoogram",
+    },
+    "editor.mouseWheelZoom": true
+}
