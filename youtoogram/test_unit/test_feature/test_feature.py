@@ -40,6 +40,12 @@ def setup_function():
                                           bcrypt.gensalt()).decode()
     Users.test_create(test_user, datetime.datetime.now())
 
+    post_data = {
+        "user_id": "test_user",
+        "gram": "I will be rich!!"
+    }
+    Post.test_create(post_data)
+
 
 # [Persistence] 회원가입 테스트
 def test_insert_user(users):
@@ -92,7 +98,7 @@ def test_unfollow(follow):
 def test_register_post(post):
     data = {
         "user_id": "test_user",
-        "gram": "I will be rich!!"
+        "gram": "This is a test!!"
     }
     post_id = post.test_create(data)
     return_post_id, _ = post.test_get_recent_post(data['user_id'])
@@ -101,18 +107,14 @@ def test_register_post(post):
 
 # [Persistence] 게시글수정 테스트
 def test_modify_post(post):
-    return_post_id, _ = post.test_get_recent_post('test_user')
     data = {
         "user_id": "test_user",
-        "post_id": return_post_id,
+        "post_id": 1,
         "gram": "I will be attractive person!!"
     }
     post.test_update(data)
-    _, return_post_gram = post.test_get_recent_post(test_user)
+    return_post_id, return_post_gram = post.test_get_recent_post(data['user_id'])
     assert data['gram'] == return_post_gram
-
-
-
 
 
 def teardown_function():
