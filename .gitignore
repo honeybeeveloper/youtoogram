@@ -1,2 +1,4 @@
 /venv/
 *.pyc 
+/.idea/
+database/query_script.pgsql
