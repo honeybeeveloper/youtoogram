@@ -1,7 +1,8 @@
 from datetime import datetime
 
-from sqlalchemy import func, subquery
+from sqlalchemy import func
 from sqlalchemy.exc import IntegrityError
+from sqlalchemy.sql.schema import Sequence
 
 from youtoogram.common.exception import IntegrityException
 from youtoogram.database import entity
@@ -9,6 +10,11 @@ from youtoogram.database.connection import db_session
 
 
 class Post(object):
+    @staticmethod
+    def assign_id():
+        assign_id, = db_session.query(Sequence('post_id_seq').next_value()).one()
+        return assign_id
+
     @staticmethod
     def create(data, now=None):
         """게시글을 등록한다
@@ -27,7 +33,14 @@ class Post(object):
         if now is None:
             now = datetime.now()
         print(f'Post create now : {now}')
-        p = entity.Post(user_id=data['user_id'], gram=data['gram'],
+        p = entity.Post(id=data['post_id'],
+                        user_id=data['user_id'],
+                        gram=data['gram'],
+                        photo_1=data['photo_1'] if data['photo_1'] else None,
+                        photo_2=data['photo_2'] if data['photo_2'] else None,
+                        photo_3=data['photo_3'] if data['photo_3'] else None,
+                        photo_4=data['photo_4'] if data['photo_4'] else None,
+                        photo_5=data['photo_5'] if data['photo_5'] else None,
                         created_at=now, modified_at=now)
         db_session.add(p)
         try:
