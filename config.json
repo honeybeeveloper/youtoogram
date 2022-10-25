@@ -1,0 +1,15 @@
+{
+  "production": {
+    "support_image_format": "['.jpg', '.jpeg', '.png']",
+    "output_basedir": "D:\\toy-output\\youtoogram",
+    "logging": {
+      "level": "info"
+    }
+  },
+  "develop": {
+    "output_basedir": "D:\\toy-output\\youtoogram-test",
+    "logging": {
+      "level": "debug"
+    }
+  }
+}
