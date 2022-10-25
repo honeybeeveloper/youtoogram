@@ -27,6 +27,7 @@ class PostAPI(object):
         data['user_id'] = get_jwt_identity()
         # post_id
         data['post_id'] = Post.assign_id()
+
         PostAPI.handle_photos(data)
 
         post_id = Post.create(data, now)
@@ -63,21 +64,27 @@ class PostAPI(object):
 
     @staticmethod
     @jwt_required()
-    def delete_post():
-        data = request.json
+    def delete_post(post_id):
         # login id is user_id
         login_id = get_jwt_identity()
-        Post.delete(data['post_id'], login_id)
-        return {'user_id': login_id, 'post_id': data['post_id']}
+        Post.delete(post_id, login_id)
+        return {'user_id': login_id, 'post_id': post_id}
 
     @staticmethod
     @jwt_required()
-    def update_post():
-        data = request.json
+    def update_post(post_id):
+        now = datetime.datetime.now()
+        form = request.form
+        data = defaultdict(str)
+
         # login id is user_id
         login_id = get_jwt_identity()
         data['user_id'] = login_id
-        Post.update(data)
+        data['post_id'] = post_id
+        data['gram'] = form.get('gram')
+
+        PostAPI.handle_photos(data)
+        Post.update(data, now)
         return {'user_id': login_id, 'post_id': data['post_id'], 'gram': data['gram']}
 
     @staticmethod
@@ -88,19 +95,15 @@ class PostAPI(object):
         user_id = login_id
 
         date_to = datetime.datetime.now()
-        date_from = date_to - datetime.timedelta(days=10)
-        # TODO : check this query!
+        date_from = date_to - datetime.timedelta(days=3)
         rows = Post.timeline(user_id, date_from, date_to)
         results = [to_dict(obj) for obj in rows]
-        print(results)
         return jsonify(results)
 
-# TODO : change
-# delete : /post/<post_id>
-# modify : /post/<post_id>
+
 routes = [
     Route(uri='/post', view_func=PostAPI.add_post, methods=['POST']),
-    Route(uri='/post', view_func=PostAPI.delete_post, methods=['DELETE']),
-    Route(uri='/post', view_func=PostAPI.update_post, methods=['PATCH']),
+    Route(uri='/post/<post_id>', view_func=PostAPI.delete_post, methods=['DELETE']),
+    Route(uri='/post/<post_id>', view_func=PostAPI.update_post, methods=['PATCH']),
     Route(uri='/timeline', view_func=PostAPI.timeline, methods=['GET'])
 ]
