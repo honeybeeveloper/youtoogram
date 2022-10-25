@@ -35,7 +35,7 @@ class Post(object):
         print(f'Post create now : {now}')
         p = entity.Post(id=data['post_id'],
                         user_id=data['user_id'],
-                        gram=data['gram'],
+                        gram=data['gram'] if data['gram'] else None,
                         photo_1=data['photo_1'] if data['photo_1'] else None,
                         photo_2=data['photo_2'] if data['photo_2'] else None,
                         photo_3=data['photo_3'] if data['photo_3'] else None,
@@ -90,7 +90,12 @@ class Post(object):
         db_session.query(entity.Post)\
             .filter(entity.Post.id == int(data['post_id']))\
             .filter(entity.Post.user_id == data['user_id'])\
-            .update({entity.Post.gram: data['gram'],
+            .update({entity.Post.gram: data['gram'] if data['gram'] else None,
+                     entity.Post.photo_1: data['photo_1'] if data['photo_1'] else None,
+                     entity.Post.photo_2: data['photo_2'] if data['photo_2'] else None,
+                     entity.Post.photo_3: data['photo_3'] if data['photo_3'] else None,
+                     entity.Post.photo_4: data['photo_4'] if data['photo_4'] else None,
+                     entity.Post.photo_5: data['photo_5'] if data['photo_5'] else None,
                      entity.Post.modified_at: now})
         try:
             db_session.commit()
@@ -110,7 +115,9 @@ class Post(object):
         Returns:
             _type_: 타임라인에 보여질 게시글들
         """
-        return db_session.query(entity.Post.id, entity.Post.user_id, entity.Post.gram, entity.Post.modified_at)\
+        return db_session.query(entity.Post.id, entity.Post.user_id, entity.Post.gram,
+                                entity.Post.photo_1, entity.Post.photo_2, entity.Post.photo_3,
+                                entity.Post.photo_4, entity.Post.photo_5, entity.Post.modified_at)\
                 .outerjoin(entity.Follow, entity.Follow.follow_id == entity.Post.user_id, isouter=True)\
                 .filter((entity.Follow.user_id == user_id) | (entity.Post.user_id == user_id))\
                 .filter(entity.Post.modified_at.between(date_from, date_to))\
