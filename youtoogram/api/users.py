@@ -56,20 +56,20 @@ class UsersAPI(object):
     @staticmethod
     @jwt_required()
     def delete_id():
-        login_id = get_jwt_identity()
+        sign_in_id = get_jwt_identity()
         # step 1. 사용자 확인
-        if not UsersAPI.is_exists_user_id(user_id=login_id):
+        if not UsersAPI.is_exists_user_id(user_id=sign_in_id):
             return UserNotFound(f'user not found!')
 
-        Users.delete(login_id)
-        return {'user_id': login_id}
+        Users.delete(sign_in_id)
+        return {'user_id': sign_in_id}
 
     @staticmethod
-    def login():
+    def sign_in():
         data = request.json
         user_id = data['user_id']
         password = data['password']
-        returned_user_id, returned_password = Users.login(user_id)
+        returned_user_id, returned_password = Users.signin(user_id)
 
         if bcrypt.checkpw(password.encode('utf-8'), returned_password.encode('utf-8')):
             access_token = create_access_token(identity=returned_user_id, expires_delta=datetime.timedelta(seconds=60*60))
@@ -83,5 +83,5 @@ class UsersAPI(object):
 routes = [
     Route(uri='/users', view_func=UsersAPI.sign_up, methods=['POST']),
     Route(uri='/users', view_func=UsersAPI.delete_id, methods=['DELETE']),
-    Route(uri='/login', view_func=UsersAPI.login, methods=['POST'])
+    Route(uri='/signin', view_func=UsersAPI.sign_in, methods=['POST'])
 ]

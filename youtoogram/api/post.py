@@ -23,7 +23,7 @@ class PostAPI(object):
         PostAPI.check_gram_length(form.get('gram'))
         data = defaultdict(str)
         data['gram'] = form.get('gram')
-        # login id is user_id
+        # sign in id is user_id
         data['user_id'] = get_jwt_identity()
         # post_id
         data['post_id'] = Post.assign_id()
@@ -65,10 +65,10 @@ class PostAPI(object):
     @staticmethod
     @jwt_required()
     def delete_post(post_id):
-        # login id is user_id
-        login_id = get_jwt_identity()
-        Post.delete(post_id, login_id)
-        return {'user_id': login_id, 'post_id': post_id}
+        # signin id is user_id
+        sign_in_id = get_jwt_identity()
+        Post.delete(post_id, sign_in_id)
+        return {'user_id': sign_in_id, 'post_id': post_id}
 
     @staticmethod
     @jwt_required()
@@ -77,22 +77,22 @@ class PostAPI(object):
         form = request.form
         data = defaultdict(str)
 
-        # login id is user_id
-        login_id = get_jwt_identity()
-        data['user_id'] = login_id
+        # sign_in id is user_id
+        sign_in_id = get_jwt_identity()
+        data['user_id'] = sign_in_id
         data['post_id'] = post_id
         data['gram'] = form.get('gram')
 
         PostAPI.handle_photos(data)
         Post.update(data, now)
-        return {'user_id': login_id, 'post_id': data['post_id'], 'gram': data['gram']}
+        return {'user_id': sign_in_id, 'post_id': data['post_id'], 'gram': data['gram']}
 
     @staticmethod
     @jwt_required()
     def timeline():
-        # login id is user_id
-        login_id = get_jwt_identity()
-        user_id = login_id
+        # sign in id is user_id
+        sign_in_id = get_jwt_identity()
+        user_id = sign_in_id
 
         date_to = datetime.datetime.now()
         date_from = date_to - datetime.timedelta(days=3)

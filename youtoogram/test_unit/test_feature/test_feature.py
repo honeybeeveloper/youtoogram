@@ -65,12 +65,12 @@ def test_insert_user(users):
 
 
 # [Persistence] 로그인 테스트
-def test_login(users):
+def test_signin(users):
     test_user = {
         "user_id": "test_user",
         "password": "1234"
     }
-    user_id, password = users.test_login(test_user['user_id'])
+    user_id, password = users.test_signin(test_user['user_id'])
     assert test_user['user_id'] == user_id and bcrypt.checkpw(test_user['password'].encode('utf-8'), password.encode('utf-8'))
     
 

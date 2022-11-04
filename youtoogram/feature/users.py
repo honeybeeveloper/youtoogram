@@ -63,7 +63,7 @@ class Users(object):
         db_session.commit()
 
     @staticmethod
-    def login(user_id, now=None):
+    def signin(user_id, now=None):
         """로그인 위해 아이디와 비밀번호를 조회한다.
 
         Args:
@@ -79,7 +79,7 @@ class Users(object):
         """        
         if now is None:
             now = datetime.now()
-        print(f'Login create now : {now}')
+        print(f'Sign in create now : {now}')
         try:
             user_id, password, = db_session.query(entity.Users.user_id, entity.Users.password)\
                                     .filter(entity.Users.user_id == user_id).one()

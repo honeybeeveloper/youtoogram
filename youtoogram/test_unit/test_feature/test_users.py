@@ -38,8 +38,8 @@ class Users(object):
         db_session.commit()
 
     @staticmethod
-    def test_login(user_id, now=datetime.datetime.now()):
-        print(f'Login create now : {now}')
+    def test_signin(user_id, now=datetime.datetime.now()):
+        print(f'Sign in create now : {now}')
         try:
             user_id, password, = db_session.query(entity.Users.user_id, entity.Users.password)\
                                     .filter(entity.Users.user_id == user_id).one()

@@ -29,7 +29,7 @@ def test_api():
     return t_api
 
 
-def test_signin(test_api):
+def test_sign_up(test_api):
     test_user = {
         "user_id": "test_user",
         "password": "1234",
@@ -45,13 +45,13 @@ def test_signin(test_api):
     assert resp.status_code == 200
 
 
-def test_login(test_api):
+def test_sign_in(test_api):
     global access_token
     test_user = {
         "user_id": "test_user",
         "password": "1234"
     }
-    resp = test_api.post('/login',
+    resp = test_api.post('/signin',
                          content_type='application/json',
                          data=json.dumps(test_user))
     assert resp.status_code == 200
